@@ -18,116 +18,125 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
-  gap: 0;
   font-family: 'IM Fell English', Georgia, serif;
 }
 
-/* ── Title ── */
 .page-title {
   font-size: 0.68rem;
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: rgba(160, 80, 30, 0.55);
   font-style: italic;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 /* ── Scene ── */
 .scene {
   position: relative;
   width: 300px;
-  height: 260px;
+  height: 280px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ── Cookie (two halves, stacked, centered in scene) ── */
+/* ── Cookie pair ── */
 .cookie-pair {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 0;
   animation: idle-rock 3.8s ease-in-out infinite;
 }
 
 @keyframes idle-rock {
-  0%, 100% { transform: translate(-50%, -50%) rotate(-2deg);   }
-  50%       { transform: translate(-50%, -50%) rotate( 2deg);   }
+  0%, 100% { transform: rotate(-1.5deg); }
+  50%       { transform: rotate( 1.5deg); }
 }
 
-/* Shared half styles */
+/* ── Each half: 210 × 82px ──
+   clip-path carves the fortune-cookie silhouette:
+   • top  half = wide arch, concave bottom (the fold pinch)
+   • bot  half = inverted arch, concave top
+   Together they look like a folded fortune cookie from the front.
+*/
 .cookie-top,
 .cookie-bot {
-  width: 148px;
-  height: 62px;
+  width: 210px;
+  height: 82px;
   position: relative;
+  display: block;
 }
 
-/* ── Top half ── */
+/* Top half — dome up, concave inner edge at bottom */
 .cookie-top {
   background:
-    radial-gradient(ellipse at 38% 28%, rgba(255,235,140,0.55) 0%, transparent 60%),
-    linear-gradient(155deg, #F8CB48 0%, #E49820 52%, #BC6E0E 100%);
-  border-radius: 74px 74px 38px 38px / 62px 62px 24px 24px;
-  box-shadow:
-    inset 0  7px 18px rgba(255,225,100,0.5),
-    inset 0 -4px  9px rgba(110,55,0,0.28),
-    0 3px 10px rgba(160,85,10,0.2);
+    radial-gradient(ellipse at 34% 28%, rgba(255,242,160,0.7) 0%, transparent 52%),
+    radial-gradient(ellipse at 72% 60%, rgba(180,90,10,0.18) 0%, transparent 50%),
+    linear-gradient(158deg, #F9D04A 0%, #E49A18 48%, #C47010 100%);
+  clip-path: path('M 4,80 C 4,28 36,2 105,2 C 174,2 206,28 206,80 C 162,76 48,76 4,80 Z');
   transform-origin: center bottom;
+  filter: drop-shadow(0 5px 10px rgba(140,65,5,0.22));
+  z-index: 2;
 }
 
-/* crack highlight on inner edge */
+/* grain texture */
 .cookie-top::before {
   content: '';
   position: absolute;
-  bottom: 0; left: 8%; right: 8%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(90,40,0,0.22) 30%, rgba(90,40,0,0.22) 70%, transparent);
-  border-radius: 0 0 50% 50%;
+  inset: 0;
+  clip-path: inherit;
+  background: repeating-linear-gradient(
+    -42deg,
+    transparent 0px, transparent 8px,
+    rgba(160,80,0,0.045) 8px, rgba(160,80,0,0.045) 9px
+  );
 }
 
-/* ── Bottom half ── */
+/* fold-shadow at the inner edge */
+.cookie-top::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 22px;
+  background: linear-gradient(to bottom, transparent, rgba(100,40,0,0.22));
+  clip-path: path('M 4,80 C 4,28 36,2 105,2 C 174,2 206,28 206,80 C 162,76 48,76 4,80 Z');
+}
+
+/* Bottom half — inverted dome, concave inner edge at top */
 .cookie-bot {
   background:
-    radial-gradient(ellipse at 62% 72%, rgba(255,205,80,0.4) 0%, transparent 60%),
-    linear-gradient(25deg, #A05C0C 0%, #D08018 52%, #ECA428 100%);
-  border-radius: 38px 38px 74px 74px / 24px 24px 62px 62px;
-  box-shadow:
-    inset 0 -7px 18px rgba(255,200,80,0.4),
-    inset 0  4px  9px rgba(110,55,0,0.32),
-    0 -2px 8px rgba(160,85,10,0.12);
+    radial-gradient(ellipse at 66% 72%, rgba(255,210,90,0.55) 0%, transparent 52%),
+    radial-gradient(ellipse at 28% 38%, rgba(130,55,5,0.2) 0%, transparent 50%),
+    linear-gradient(22deg, #A56010 0%, #D28818 45%, #ECA828 100%);
+  clip-path: path('M 4,2 C 48,6 162,6 206,2 C 206,54 174,80 105,80 C 36,80 4,54 4,2 Z');
   transform-origin: center top;
+  filter: drop-shadow(0 -3px 8px rgba(140,65,5,0.14));
+  z-index: 2;
 }
 
 .cookie-bot::before {
   content: '';
   position: absolute;
-  top: 0; left: 8%; right: 8%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(90,40,0,0.22) 30%, rgba(90,40,0,0.22) 70%, transparent);
-  border-radius: 50% 50% 0 0;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -42deg,
+    transparent 0px, transparent 8px,
+    rgba(160,80,0,0.045) 8px, rgba(160,80,0,0.045) 9px
+  );
+  clip-path: path('M 4,2 C 48,6 162,6 206,2 C 206,54 174,80 105,80 C 36,80 4,54 4,2 Z');
 }
 
-/* subtle diagonal grain on both halves */
-.cookie-top::after,
 .cookie-bot::after {
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: repeating-linear-gradient(
-    -38deg,
-    transparent 0px,
-    transparent 9px,
-    rgba(170,90,10,0.05) 9px,
-    rgba(170,90,10,0.05) 10px
-  );
+  top: 0; left: 0; right: 0; height: 22px;
+  background: linear-gradient(to top, transparent, rgba(100,40,0,0.18));
+  clip-path: path('M 4,2 C 48,6 162,6 206,2 C 206,54 174,80 105,80 C 36,80 4,54 4,2 Z');
 }
 
 /* ── Paper strip ── */
@@ -136,23 +145,22 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 252px;
+  width: 248px;
   background: #FEFCF0;
   border-top:    2px solid #C42020;
   border-bottom: 2px solid #C42020;
-  padding: 11px 20px 9px;
-  z-index: 3;
+  padding: 12px 22px 10px;
+  z-index: 1;
   pointer-events: none;
-  /* starts collapsed to center */
   clip-path: inset(0 50% 0 50%);
   opacity: 0;
+  box-shadow: 0 2px 14px rgba(100,40,0,0.1);
 }
 
-/* ── Fortune text ── */
 .fortune-text {
   display: block;
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.58;
   color: #1c1008;
   text-align: center;
   opacity: 0;
@@ -160,90 +168,75 @@ body {
 
 .fortune-cat {
   display: block;
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
+  font-size: 0.57rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #C42020;
   text-align: center;
-  margin-top: 7px;
+  margin-top: 8px;
   opacity: 0;
   font-style: normal;
 }
 
-/* ── CRACKED state — all animations trigger here ── */
+/* ── CRACKED state ── */
+.scene.cracked .paper,
+.scene.resetting .paper {
+  z-index: 4;
+}
 
-/* Stop idle rock */
 .scene.cracked .cookie-pair,
 .scene.resetting .cookie-pair {
   animation: none;
 }
 
-/* Halves fly apart */
 .scene.cracked .cookie-top {
-  animation: fly-top 0.42s cubic-bezier(0.22, 0.68, 0, 1.2) forwards;
+  animation: fly-top 0.44s cubic-bezier(0.22, 0.68, 0, 1.2) forwards;
 }
 .scene.cracked .cookie-bot {
-  animation: fly-bot 0.42s cubic-bezier(0.22, 0.68, 0, 1.2) forwards;
+  animation: fly-bot 0.44s cubic-bezier(0.22, 0.68, 0, 1.2) forwards;
 }
-
-/* Paper unfurls */
 .scene.cracked .paper {
-  animation: unfurl 0.52s cubic-bezier(0.34, 1.46, 0.64, 1) 0.22s forwards;
+  animation: unfurl 0.52s cubic-bezier(0.34, 1.46, 0.64, 1) 0.24s forwards;
 }
-
-/* Text materialises */
 .scene.cracked .fortune-text {
-  animation: text-rise 0.38s ease 0.6s forwards;
+  animation: text-rise 0.38s ease 0.62s forwards;
 }
 .scene.cracked .fortune-cat {
-  animation: text-rise 0.32s ease 0.72s forwards;
+  animation: text-rise 0.32s ease 0.76s forwards;
 }
 
 @keyframes fly-top {
   0%   { transform: rotate(  0deg) translate(  0px,   0px); }
-  15%  { transform: rotate( -4deg) translate( -4px,  -6px); } /* crack hesitation */
-  100% { transform: rotate(-28deg) translate(-38px, -52px); }
+  15%  { transform: rotate( -3deg) translate( -3px,  -5px); }
+  100% { transform: rotate(-25deg) translate(-30px, -58px); }
 }
-
 @keyframes fly-bot {
   0%   { transform: rotate(  0deg) translate(  0px,   0px); }
-  15%  { transform: rotate(  4deg) translate(  4px,   6px); }
-  100% { transform: rotate( 28deg) translate( 38px,  52px); }
+  15%  { transform: rotate(  3deg) translate(  3px,   5px); }
+  100% { transform: rotate( 25deg) translate( 30px,  58px); }
 }
-
 @keyframes unfurl {
-  0%   { clip-path: inset(0 50% 0 50%); opacity: 1; }
-  100% { clip-path: inset(0  0% 0  0%); opacity: 1; }
+  from { clip-path: inset(0 50% 0 50%); opacity: 1; }
+  to   { clip-path: inset(0  0% 0  0%); opacity: 1; }
 }
-
 @keyframes text-rise {
-  0%   { opacity: 0; transform: translateY(4px); }
-  100% { opacity: 1; transform: translateY(0);   }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── RESETTING state ── */
 .scene.resetting .fortune-text,
-.scene.resetting .fortune-cat {
-  opacity: 0;
-  transition: opacity 0.12s ease;
-}
-
-.scene.resetting .cookie-top {
-  animation: return-top 0.28s ease-in forwards;
-}
-.scene.resetting .cookie-bot {
-  animation: return-bot 0.28s ease-in forwards;
-}
-.scene.resetting .paper {
-  animation: roll-up 0.22s ease-in forwards;
-}
+.scene.resetting .fortune-cat { opacity: 0; transition: opacity 0.12s ease; }
+.scene.resetting .cookie-top  { animation: return-top 0.28s ease-in forwards; }
+.scene.resetting .cookie-bot  { animation: return-bot 0.28s ease-in forwards; }
+.scene.resetting .paper        { animation: roll-up   0.22s ease-in forwards; }
 
 @keyframes return-top {
-  from { transform: rotate(-28deg) translate(-38px, -52px); }
+  from { transform: rotate(-25deg) translate(-30px, -58px); }
   to   { transform: rotate(  0deg) translate(  0px,   0px); }
 }
 @keyframes return-bot {
-  from { transform: rotate( 28deg) translate( 38px,  52px); }
+  from { transform: rotate( 25deg) translate( 30px,  58px); }
   to   { transform: rotate(  0deg) translate(  0px,   0px); }
 }
 @keyframes roll-up {
@@ -258,13 +251,12 @@ body {
   text-transform: uppercase;
   color: rgba(160, 80, 30, 0.55);
   font-style: italic;
-  margin-top: 8px;
+  margin-top: 10px;
   animation: hint-breathe 3s ease-in-out infinite;
 }
-
 @keyframes hint-breathe {
   0%, 100% { opacity: 0.55; }
-  50%       { opacity: 0.9;  }
+  50%       { opacity: 0.9; }
 }
 
 .counter {
@@ -281,17 +273,14 @@ body {
 <p class="page-title">fortune cookie</p>
 
 <div class="scene" id="scene">
-
   <div class="cookie-pair" id="cookiePair">
     <div class="cookie-top"></div>
     <div class="cookie-bot"></div>
   </div>
-
   <div class="paper" id="paper">
     <span class="fortune-text" id="fortuneText"></span>
     <span class="fortune-cat"  id="fortuneCat"></span>
   </div>
-
 </div>
 
 <p class="hint" id="hint">tap to crack open</p>
@@ -412,7 +401,7 @@ function shuffle(a) {
 
 let deck  = shuffle(ALL);
 let idx   = 0;
-let state = 'idle'; // 'idle' | 'cracked' | 'busy'
+let state = 'idle';
 
 const scene       = document.getElementById('scene');
 const fortuneText = document.getElementById('fortuneText');
@@ -432,11 +421,10 @@ function crack() {
   state = 'busy';
   loadQuestion();
   scene.classList.add('cracked');
-  // Animations total ~0.85s; unlock after that
   setTimeout(() => {
     state = 'cracked';
     hintEl.textContent = 'tap to crack another';
-  }, 900);
+  }, 950);
 }
 
 function reset(then) {
@@ -445,22 +433,22 @@ function reset(then) {
   scene.classList.add('resetting');
   setTimeout(() => {
     scene.classList.remove('resetting');
-    void scene.offsetWidth; // force reflow so animations restart cleanly
+    void scene.offsetWidth;
     idx++;
     then();
-  }, 340);
+  }, 350);
 }
 
 scene.addEventListener('click', () => {
-  if (state === 'idle')    { crack(); }
-  if (state === 'cracked') { reset(crack); }
+  if (state === 'idle')    crack();
+  if (state === 'cracked') reset(crack);
 });
 
 document.addEventListener('keydown', e => {
   if ([' ', 'Enter', 'ArrowRight'].includes(e.key)) {
     e.preventDefault();
-    if (state === 'idle')    { crack(); }
-    if (state === 'cracked') { reset(crack); }
+    if (state === 'idle')    crack();
+    if (state === 'cracked') reset(crack);
   }
 });
 </script>
