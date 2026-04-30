@@ -10,79 +10,63 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Background ── */
 body {
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 55%,
-      rgba(60,10,120,0.45) 0%,
+    radial-gradient(ellipse 55% 60% at 50% 40%,
+      rgba(65,10,130,0.5) 0%,
       transparent 70%),
     #050010;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
-  padding: 32px 20px;
+  gap: 0;
+  padding: 28px 20px 32px;
   font-family: 'Cinzel', serif;
   overflow: hidden;
   position: relative;
 }
 
-/* Starfield */
-.stars {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
+/* ── Starfield ── */
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .star {
   position: absolute;
   border-radius: 50%;
   background: #fff;
   animation: star-twinkle var(--d) ease-in-out infinite alternate var(--delay);
 }
-
 @keyframes star-twinkle {
-  0%   { opacity: 0.08; transform: scale(0.7); }
-  100% { opacity: 0.7;  transform: scale(1.2); }
+  0%   { opacity: 0.06; transform: scale(0.6); }
+  100% { opacity: 0.65; transform: scale(1.3); }
 }
 
 /* ── Title ── */
 .title {
   position: relative;
   z-index: 2;
-  font-size: clamp(0.7rem, 2vw, 0.85rem);
-  letter-spacing: 0.45em;
+  font-size: clamp(0.6rem, 1.8vw, 0.78rem);
+  letter-spacing: 0.48em;
   text-transform: uppercase;
-  color: rgba(160,120,220,0.55);
-  text-align: center;
+  color: rgba(160,110,230,0.45);
+  margin-bottom: 20px;
 }
 
-/* ── Ball scene ── */
-.ball-scene {
+/* ── Ball ── */
+.ball-wrap {
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Floating idle animation — paused during shake */
-.ball-wrap {
   animation: float 5s ease-in-out infinite;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  margin-bottom: 4px;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0);    }
-  50%       { transform: translateY(-12px); }
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
-/* Shake — overrides float for its duration */
 .ball-wrap.shaking {
   animation: shake 0.7s cubic-bezier(0.36,0.07,0.19,0.97) both;
 }
@@ -102,314 +86,276 @@ body {
   100% { transform: translate(0,0)        rotate(0deg);   }
 }
 
-/* ── The ball itself ── */
 .ball {
-  width: clamp(280px, 45vw, 360px);
-  height: clamp(280px, 45vw, 360px);
+  width: clamp(200px, 36vw, 260px);
+  height: clamp(200px, 36vw, 260px);
   border-radius: 50%;
   position: relative;
-
-  /* Deep sphere gradient */
   background:
-    radial-gradient(circle at 33% 30%,
-      rgba(110,60,200,0.22) 0%,
-      transparent 48%),
-    radial-gradient(circle at 68% 72%,
-      rgba(40,0,90,0.35) 0%,
-      transparent 38%),
+    radial-gradient(circle at 33% 30%, rgba(110,60,200,0.22) 0%, transparent 48%),
+    radial-gradient(circle at 68% 72%, rgba(40,0,90,0.35)    0%, transparent 38%),
     radial-gradient(circle at 50% 50%,
-      #1c0848 0%,
-      #0d0428 38%,
-      #050018 72%,
-      #010008 100%);
-
+      #1c0848 0%, #0d0428 38%, #050018 72%, #010008 100%);
   box-shadow:
-    inset -28px -22px 70px rgba(0,0,0,0.95),
-    inset  12px  10px 36px rgba(80,40,150,0.18),
-    0 0  55px rgba(70,15,150,0.4),
-    0 28px 72px rgba(0,0,0,0.75),
+    inset -24px -20px 60px rgba(0,0,0,0.95),
+    inset  10px  8px  30px rgba(80,40,150,0.18),
+    0 0 50px rgba(70,15,150,0.4),
+    0 24px 64px rgba(0,0,0,0.75),
     0 0 0 1.5px rgba(70,30,130,0.25);
-
   transition: filter 0.3s ease;
 }
 
-.ball:hover {
-  filter: brightness(1.12);
-}
+.ball:hover { filter: brightness(1.15); }
 
-/* Specular highlight */
+/* Specular */
 .ball::before {
   content: '';
   position: absolute;
-  width: 22%;
-  height: 14%;
+  width: 22%; height: 13%;
   border-radius: 50%;
-  background: radial-gradient(ellipse,
-    rgba(255,255,255,0.11) 0%,
-    transparent 100%);
-  top: 18%;
-  left: 20%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 100%);
+  top: 17%; left: 20%;
   transform: rotate(-18deg);
 }
 
-/* ── White "8" circle ── */
+/* "8" circle */
 .eight-wrap {
   position: absolute;
-  top: 9%;
-  left: 50%;
+  top: 9%; left: 50%;
   transform: translateX(-50%);
-  width: 26%;
-  height: 26%;
+  width: 27%; height: 27%;
   border-radius: 50%;
   background: rgba(255,255,255,0.93);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 2px 14px rgba(0,0,0,0.55),
-    inset 0 1px 3px rgba(255,255,255,0.5);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.55);
 }
 
 .eight-text {
-  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
   font-weight: 900;
   color: #07001c;
   line-height: 1;
   margin-top: 2px;
-  letter-spacing: -0.02em;
 }
 
-/* ── Circular window (the eye) ── */
+/* Eye window — decorative only, no text */
 .eye-outer {
   position: absolute;
-  bottom: 9%;
-  left: 50%;
+  bottom: 9%; left: 50%;
   transform: translateX(-50%);
-  width: 44%;
-  height: 44%;
+  width: 44%; height: 44%;
   border-radius: 50%;
   background: #02000c;
   box-shadow:
-    inset 0 0 22px rgba(0,0,0,0.9),
-    inset 0 0  8px rgba(0,0,0,0.6),
-    0 0 18px rgba(50,0,130,0.5);
+    inset 0 0 20px rgba(0,0,0,0.9),
+    0 0 16px rgba(50,0,130,0.5);
 }
 
 .eye-inner {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* ── Triangle ── */
-.triangle {
+.eye-triangle {
   position: absolute;
-  inset: 5%;
+  inset: 6%;
   clip-path: polygon(50% 6%, 4% 94%, 96% 94%);
-  background: linear-gradient(168deg,
-    #100045 0%,
-    #1e0070 55%,
-    #0f0040 100%);
+  background: linear-gradient(168deg, #100045 0%, #1e0070 55%, #0f0040 100%);
   animation: tri-pulse 3.5s ease-in-out infinite;
 }
 
 @keyframes tri-pulse {
-  0%, 100% {
-    filter:
-      drop-shadow(0 0 5px  rgba(110,55,255,0.65))
-      drop-shadow(0 0 12px rgba(60,10,200,0.35));
-  }
-  50% {
-    filter:
-      drop-shadow(0 0 9px  rgba(130,75,255,0.9))
-      drop-shadow(0 0 20px rgba(80,20,220,0.55));
-  }
+  0%, 100% { filter: drop-shadow(0 0 5px  rgba(110,55,255,0.65)) drop-shadow(0 0 12px rgba(60,10,200,0.35)); }
+  50%       { filter: drop-shadow(0 0 10px rgba(130,75,255,0.9))  drop-shadow(0 0 22px rgba(80,20,220,0.6));  }
 }
 
-/* Triangle edge highlight (bright inner rim) */
-.triangle::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(
-    50% 8%,   46% 14%,   50% 10%,   54% 14%,
-    94% 92%,  88% 90%,   94% 90%,
-    6%  92%,  6%  90%,   12% 90%,   6% 92%
-  );
-  background: rgba(140,100,255,0.15);
-}
-
-/* ── Answer text (inside eye) ── */
-.answer {
-  position: relative;
-  z-index: 2;
-  color: #9dd4ff;
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: clamp(0.52rem, 1.3vw, 0.68rem);
-  line-height: 1.5;
-  text-align: center;
-  padding: 12% 12% 20%;
-  width: 100%;
-  opacity: 0;
-  text-shadow:
-    0 0 8px  rgba(140,210,255,0.7),
-    0 0 16px rgba(100,170,255,0.4);
-}
-
-.answer.revealed {
-  animation: text-rise 1.4s ease-out forwards;
-}
-
-@keyframes text-rise {
-  0%   { opacity: 0; filter: blur(6px); transform: translateY(5px); }
-  35%  { opacity: 0; filter: blur(4px); }
-  70%  { opacity: 0.7; filter: blur(1px); }
-  100% { opacity: 1; filter: blur(0); transform: translateY(0); }
-}
-
-/* ── Fog overlay (hides text, clears on reveal) ── */
 .fog {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 60%,
-    #130050 20%,
-    #07001e 65%,
-    #02000a 100%);
+  background: radial-gradient(circle at 50% 60%, #130050 20%, #07001e 65%, #02000a 100%);
   z-index: 3;
   pointer-events: none;
 }
 
-.fog.swirling {
-  animation: fog-swirl 0.6s ease-in forwards;
-}
-
-.fog.clearing {
-  animation: fog-clear 1.1s ease-out forwards;
-}
+.fog.swirling { animation: fog-swirl 0.6s ease-in forwards; }
+.fog.clearing { animation: fog-clear 1.1s ease-out forwards; }
 
 @keyframes fog-swirl {
-  0%   { opacity: 1; transform: rotate(0deg) scale(1); }
-  100% { opacity: 1; transform: rotate(180deg) scale(1.1); }
+  0%   { opacity: 1; transform: rotate(0deg)   scale(1);   }
+  100% { opacity: 1; transform: rotate(200deg) scale(1.1); }
 }
-
 @keyframes fog-clear {
   0%   { opacity: 1; transform: scale(1.05); }
-  40%  { opacity: 0.6; }
+  40%  { opacity: 0.5; }
   100% { opacity: 0; transform: scale(1); }
 }
 
-/* ── Category + counter below ball ── */
-.below-ball {
+/* ── Oracle area — triangle frame + big readable text ── */
+.oracle-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 400px;
+  /* inverted triangle (▽): widest at top, narrows to point at bottom */
+  /* text sits in the top ~60% where there's plenty of width */
+}
+
+.oracle-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* glow applied via filter on the polygon in SVG */
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.oracle-wrap.revealed .oracle-svg { opacity: 1; }
+
+/* Text floats on top of the SVG */
+.oracle-text-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  /* keep text in the wide upper section of the ▽ triangle */
+  padding: 14% 18% 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  min-height: 40px;
+  gap: 12px;
 }
 
-.category-reveal {
-  font-size: 0.62rem;
+.oracle-question {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+  line-height: 1.58;
+  text-align: center;
+  color: #aadeff;
+  text-shadow:
+    0 0 14px rgba(150,220,255,0.75),
+    0 0 30px rgba(100,180,255,0.4);
+  opacity: 0;
+}
+
+.oracle-wrap.revealed .oracle-question {
+  animation: text-rise 1.4s ease-out 0.35s forwards;
+}
+
+.oracle-cat {
+  font-size: clamp(0.55rem, 1.5vw, 0.65rem);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: rgba(140,100,220,0);
-  transition: color 0.8s ease 0.6s;
+  transition: color 0.9s ease 0.8s;
 }
 
-.category-reveal.shown {
+.oracle-wrap.revealed .oracle-cat {
   color: rgba(140,100,220,0.65);
 }
 
-/* ── Bottom controls ── */
+@keyframes text-rise {
+  0%   { opacity: 0; filter: blur(8px);  transform: translateY(8px);  }
+  40%  { opacity: 0; filter: blur(5px); }
+  75%  { opacity: 0.8; filter: blur(1px); }
+  100% { opacity: 1; filter: blur(0);    transform: translateY(0);    }
+}
+
+/* ── Controls ── */
 .controls {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
+  margin-top: 16px;
 }
 
 .instruction {
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(160,120,220,0.4);
+  color: rgba(160,120,220,0.38);
   animation: hint-pulse 3s ease-in-out infinite;
 }
 
 @keyframes hint-pulse {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 0.8; }
+  0%, 100% { opacity: 0.38; }
+  50%       { opacity: 0.75; }
 }
 
-.counter {
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  color: rgba(120,80,180,0.35);
-}
-
-/* Progress arc (subtle) */
 .progress-wrap {
-  width: 140px;
-  height: 3px;
+  width: 120px; height: 2px;
   background: rgba(80,30,160,0.2);
-  border-radius: 3px;
-  overflow: hidden;
+  border-radius: 2px; overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #4010a0, #8040ff, #4010a0);
   background-size: 200%;
-  border-radius: 3px;
+  border-radius: 2px;
   transition: width 0.5s ease;
-  animation: progress-sheen 3s linear infinite;
+  animation: sheen 3s linear infinite;
 }
 
-@keyframes progress-sheen {
+@keyframes sheen {
   0%   { background-position: 0%; }
   100% { background-position: 200%; }
+}
+
+.counter {
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: rgba(120,80,180,0.32);
 }
 </style>
 </head>
 <body>
 
-<!-- Starfield (built by JS) -->
 <div class="stars" id="stars"></div>
 
 <p class="title">✦ &nbsp; design review &nbsp; ✦</p>
 
-<div class="ball-scene">
-
-  <div class="ball-wrap" id="ballWrap">
-    <div class="ball" id="ball">
-
-      <div class="eight-wrap">
-        <span class="eight-text">8</span>
+<div class="ball-wrap" id="ballWrap">
+  <div class="ball">
+    <div class="eight-wrap"><span class="eight-text">8</span></div>
+    <div class="eye-outer">
+      <div class="eye-inner">
+        <div class="eye-triangle"></div>
+        <div class="fog" id="fog"></div>
       </div>
-
-      <div class="eye-outer">
-        <div class="eye-inner">
-          <div class="triangle"></div>
-          <div class="answer" id="answer"></div>
-          <div class="fog" id="fog"></div>
-        </div>
-      </div>
-
     </div>
   </div>
+</div>
 
-  <div class="below-ball">
-    <div class="category-reveal" id="catLabel"></div>
+<!-- Triangle oracle — inverted ▽, widest at top where text lives -->
+<div class="oracle-wrap" id="oracleWrap">
+  <svg class="oracle-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <defs>
+      <filter id="tri-glow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Inverted triangle ▽ -->
+    <polygon
+      points="0,0 400,0 200,290"
+      fill="rgba(10,0,45,0.78)"
+      stroke="rgba(120,65,255,0.85)"
+      stroke-width="1.5"
+      filter="url(#tri-glow)"
+    />
+  </svg>
+
+  <div class="oracle-text-layer">
+    <p class="oracle-question" id="oracleQuestion"></p>
+    <div class="oracle-cat" id="oracleCat"></div>
   </div>
-
 </div>
 
 <div class="controls">
@@ -423,19 +369,19 @@ body {
 <script>
 // ── Starfield ──────────────────────────────────────────────────────────────
 (function() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 110; i++) {
     const s = document.createElement('div');
     s.className = 'star';
-    const sz = 0.8 + Math.random() * 1.8;
+    const sz = 0.7 + Math.random() * 1.8;
     s.style.cssText = [
-      `width:${sz}px`, `height:${sz}px`,
-      `top:${Math.random()*100}%`, `left:${Math.random()*100}%`,
+      `width:${sz}px`,`height:${sz}px`,
+      `top:${Math.random()*100}%`,`left:${Math.random()*100}%`,
       `--d:${1.5 + Math.random()*3.5}s`,
       `--delay:-${Math.random()*4}s`,
-      `opacity:${0.05 + Math.random()*0.3}`,
+      `opacity:${0.04 + Math.random()*0.28}`,
     ].join(';');
-    container.appendChild(s);
+    c.appendChild(s);
   }
 })();
 
@@ -552,115 +498,98 @@ function shuffle(a) {
   return b;
 }
 
-// ── State ──────────────────────────────────────────────────────────────────
-let deck   = shuffle(ALL);
-let idx    = 0;
-let busy   = false;
+let deck = shuffle(ALL);
+let idx  = 0;
+let busy = false;
 
-const ballWrap    = document.getElementById('ballWrap');
-const answerEl    = document.getElementById('answer');
-const fogEl       = document.getElementById('fog');
-const catLabel    = document.getElementById('catLabel');
-const instruction = document.getElementById('instruction');
-const progressFill= document.getElementById('progressFill');
-const counterEl   = document.getElementById('counter');
+const ballWrap     = document.getElementById('ballWrap');
+const fogEl        = document.getElementById('fog');
+const oracleWrap   = document.getElementById('oracleWrap');
+const oracleQ      = document.getElementById('oracleQuestion');
+const oracleCat    = document.getElementById('oracleCat');
+const instruction  = document.getElementById('instruction');
+const progressFill = document.getElementById('progressFill');
+const counterEl    = document.getElementById('counter');
 
-// ── Core reveal logic ──────────────────────────────────────────────────────
 function reveal() {
   if (busy) return;
   busy = true;
 
-  // Reset previous state
-  answerEl.classList.remove('revealed');
-  answerEl.style.opacity = '0';
-  catLabel.classList.remove('shown');
+  // Reset
+  oracleWrap.classList.remove('revealed');
+  oracleQ.style.animation = 'none';
+  oracleQ.style.opacity   = '0';
   fogEl.classList.remove('swirling', 'clearing');
   fogEl.style.opacity = '1';
 
-  // Start shake
+  // Shake
   ballWrap.classList.remove('shaking');
-  void ballWrap.offsetWidth; // reflow to restart animation
+  void ballWrap.offsetWidth;
   ballWrap.classList.add('shaking');
 
-  // Swirl the fog during shake
-  setTimeout(() => {
-    fogEl.classList.add('swirling');
-  }, 80);
+  setTimeout(() => { fogEl.classList.add('swirling'); }, 80);
 
   setTimeout(() => {
-    // Advance deck
+    // Advance
     if (idx >= deck.length - 1) { deck = shuffle(ALL); idx = 0; }
     else idx++;
 
     const q = deck[idx];
-    answerEl.textContent = q.t;
-    catLabel.textContent  = q.c;
+    oracleQ.textContent  = q.t;
+    oracleCat.textContent = q.c;
+
+    // Force re-trigger animation
+    oracleQ.style.animation = 'none';
+    void oracleQ.offsetWidth;
+    oracleQ.style.animation = '';
 
     // Clear fog
     fogEl.classList.remove('swirling');
     fogEl.classList.add('clearing');
 
-    // Rise text
-    setTimeout(() => {
-      answerEl.classList.add('revealed');
-      catLabel.classList.add('shown');
-    }, 300);
+    // Reveal oracle
+    setTimeout(() => { oracleWrap.classList.add('revealed'); }, 250);
 
-    // After fog fully gone, reset it (hidden via opacity)
+    // Hide fog
     setTimeout(() => {
       fogEl.style.opacity = '0';
       fogEl.classList.remove('clearing');
     }, 1100);
 
-    // Update UI
     progressFill.style.width = `${((idx + 1) / deck.length) * 100}%`;
     counterEl.textContent    = `${idx + 1} · ${deck.length}`;
     instruction.textContent  = 'click · shake · ask again';
 
     ballWrap.classList.remove('shaking');
     busy = false;
-
   }, 700);
 }
 
-// ── Click / tap ────────────────────────────────────────────────────────────
 ballWrap.addEventListener('click', reveal);
 
-// ── Keyboard ───────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   if ([' ', 'Enter', 'ArrowRight'].includes(e.key)) { e.preventDefault(); reveal(); }
 });
 
-// ── Device shake (mobile) ──────────────────────────────────────────────────
-let lastShake = 0;
-let prevAcc = { x: 0, y: 0, z: 0 };
-
+// Device shake
+let lastShake = 0, prevAcc = { x:0, y:0, z:0 };
 function onMotion(e) {
   const acc = e.accelerationIncludingGravity;
   if (!acc) return;
   const now = Date.now();
   if (now - lastShake < 1000) return;
-
-  const dx = Math.abs((acc.x || 0) - prevAcc.x);
-  const dy = Math.abs((acc.y || 0) - prevAcc.y);
-  const dz = Math.abs((acc.z || 0) - prevAcc.z);
-
-  if (dx + dy + dz > 28) {
-    lastShake = now;
-    reveal();
-  }
-
-  prevAcc = { x: acc.x || 0, y: acc.y || 0, z: acc.z || 0 };
+  const d = Math.abs((acc.x||0)-prevAcc.x) + Math.abs((acc.y||0)-prevAcc.y) + Math.abs((acc.z||0)-prevAcc.z);
+  if (d > 28) { lastShake = now; reveal(); }
+  prevAcc = { x:acc.x||0, y:acc.y||0, z:acc.z||0 };
 }
 
-// Request permission on iOS 13+
 if (typeof DeviceMotionEvent !== 'undefined' &&
     typeof DeviceMotionEvent.requestPermission === 'function') {
-  document.addEventListener('click', function askPerm() {
+  document.addEventListener('click', function ask() {
     DeviceMotionEvent.requestPermission()
       .then(r => { if (r === 'granted') window.addEventListener('devicemotion', onMotion); })
       .catch(() => {});
-    document.removeEventListener('click', askPerm);
+    document.removeEventListener('click', ask);
   }, { once: true });
 } else {
   window.addEventListener('devicemotion', onMotion);
