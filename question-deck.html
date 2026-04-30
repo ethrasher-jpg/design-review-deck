@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Review Deck</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 30%, #FAF6EF 0%, #EDE7D9 100%);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 48px 20px;
+  }
+
+  .deck-title {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #A89F93;
+    margin-bottom: 52px;
+    font-weight: 500;
+  }
+
+  /* ── Scene holds the fanned chips ── */
+  .scene {
+    position: relative;
+    width: 300px;
+    height: 420px;
+    overflow: visible;
+  }
+
+  /* ── Individual Pantone chip ── */
+  .chip {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 210px;
+    height: 354px;
+    transform-origin: bottom center;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13), 0 2px 6px rgba(0,0,0,0.07);
+    user-select: none;
+  }
+
+  .chip-color {
+    height: 64%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 22px;
+  }
+
+  .chip-question {
+    color: rgba(255,255,255,0.96);
+    font-size: 14.5px;
+    line-height: 1.62;
+    text-align: center;
+    font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .chip-white {
+    height: 36%;
+    padding: 0 18px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-top: 1.5px solid #F0ECE5;
+  }
+
+  .chip-code {
+    font-size: 9px;
+    color: #C8C0B6;
+    letter-spacing: 0.1em;
+    margin-bottom: 3px;
+  }
+
+  .chip-cat {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    line-height: 1.35;
+  }
+
+  .chip-brand {
+    font-size: 7px;
+    letter-spacing: 0.25em;
+    color: #D4CBC0;
+    margin-top: 13px;
+    text-transform: uppercase;
+  }
+
+  /* ── Animations ── */
+  @keyframes flipBack {
+    0%   { transform: translateX(-50%) rotate(0deg) scale(1);    opacity: 1; }
+    60%  { opacity: 0.5; }
+    100% { transform: translateX(-50%) rotate(-18deg) scale(0.88); opacity: 0; }
+  }
+
+  @keyframes comeForward {
+    0%   { transform: translateX(-50%) rotate(-6deg); opacity: 0.5; }
+    100% { transform: translateX(-50%) rotate(0deg);  opacity: 1;   }
+  }
+
+  .chip.flipping-back {
+    animation: flipBack 0.38s cubic-bezier(0.4, 0, 1, 1) forwards;
+    z-index: 20 !important;
+    pointer-events: none;
+  }
+
+  .chip.coming-forward {
+    animation: comeForward 0.32s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 44px;
+  }
+
+  .next-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 36px;
+    background: #1A1A1A;
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.14s, box-shadow 0.2s;
+  }
+
+  .next-btn:hover:not(:disabled) {
+    background: #2D2D2D;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+  }
+
+  .next-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  .next-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .btn-icon { font-size: 13px; }
+
+  .progress-wrap {
+    width: 200px;
+    height: 2px;
+    background: #DDD5C8;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #1A1A1A;
+    border-radius: 2px;
+    transition: width 0.42s ease;
+  }
+
+  .counter {
+    font-size: 10px;
+    color: #B8B0A5;
+    letter-spacing: 0.14em;
+  }
+
+  /* keyboard hint */
+  .hint {
+    font-size: 9px;
+    color: #C8BFB4;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<p class="deck-title">Design Review Deck</p>
+
+<div class="scene" id="scene"></div>
+
+<div class="controls">
+  <button class="next-btn" id="nextBtn">
+    <span class="btn-icon" id="btnIcon">✦</span>
+    <span id="btnText">Next Question</span>
+  </button>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="counter" id="counter"></div>
+  <div class="hint">space or → to advance</div>
+</div>
+
+<script>
+const CAT = {
+  "Design & Visual Choices":    { color: "#BF5E8A", code: "P 180 C" },
+  "Brand Identity & Voice":     { color: "#C85535", code: "P 035 C" },
+  "Customer & Audience":        { color: "#2E9070", code: "P 335 C" },
+  "Product & Content Strategy": { color: "#7050B0", code: "P 265 C" },
+  "Copy & Design Together":     { color: "#B87820", code: "P 116 C" },
+  "Self-Reflection & Process":  { color: "#C06828", code: "P 136 C" },
+  "Flow & Experience":          { color: "#2288B8", code: "P 299 C" },
+  "Decision-Making":            { color: "#2E8C52", code: "P 338 C" },
+  "Big Picture":                { color: "#3E4CA8", code: "P 280 C" },
+  "Curveballs":                 { color: "#C02858", code: "P 207 C" },
+};
+
+const ALL = [
+  // Design & Visual Choices
+  { t:"What made you choose this color palette?", c:"Design & Visual Choices" },
+  { t:"Why did you pick this font pairing?", c:"Design & Visual Choices" },
+  { t:"What's the visual hierarchy you're trying to establish?", c:"Design & Visual Choices" },
+  { t:"Why this layout over a different one?", c:"Design & Visual Choices" },
+  { t:"What was the hardest design decision you made?", c:"Design & Visual Choices" },
+  { t:"How did you decide what to feature first?", c:"Design & Visual Choices" },
+  { t:"What's one design choice you're unsure about?", c:"Design & Visual Choices" },
+  { t:"Why did you frame the product this way?", c:"Design & Visual Choices" },
+  { t:"How are you using white space here?", c:"Design & Visual Choices" },
+  { t:"What's the focal point, and how are you guiding the eye to it?", c:"Design & Visual Choices" },
+  { t:"What mood are you trying to create visually?", c:"Design & Visual Choices" },
+  { t:"Why this style over a more minimal or maximal approach?", c:"Design & Visual Choices" },
+  { t:"What's the role of contrast in this design?", c:"Design & Visual Choices" },
+  { t:"How did you decide on image vs. graphic vs. text-heavy?", c:"Design & Visual Choices" },
+  { t:"What design element are you most proud of?", c:"Design & Visual Choices" },
+  // Brand Identity & Voice
+  { t:"How does this reflect the brand's personality?", c:"Brand Identity & Voice" },
+  { t:"If the brand were a person, who would it be?", c:"Brand Identity & Voice" },
+  { t:"What's one thing you want shoppers to feel immediately?", c:"Brand Identity & Voice" },
+  { t:"How did the brand guide influence your choices?", c:"Brand Identity & Voice" },
+  { t:"Where did you push the brand guide vs. stick to it?", c:"Brand Identity & Voice" },
+  { t:"What does this brand do that competitors don't?", c:"Brand Identity & Voice" },
+  { t:"How would you describe the brand voice in three words?", c:"Brand Identity & Voice" },
+  { t:"What part of the brand story are you telling here?", c:"Brand Identity & Voice" },
+  { t:"Does this feel on-brand or like a stretch?", c:"Brand Identity & Voice" },
+  { t:"What's the brand's biggest visual signature?", c:"Brand Identity & Voice" },
+  // Customer & Audience
+  { t:"Who is the customer you pictured while designing this?", c:"Customer & Audience" },
+  { t:"What problem are they trying to solve?", c:"Customer & Audience" },
+  { t:"What do they need to see in the first 3 seconds?", c:"Customer & Audience" },
+  { t:"What objection might they have?", c:"Customer & Audience" },
+  { t:"Where in the buying journey are they?", c:"Customer & Audience" },
+  { t:"What emotion are you trying to evoke?", c:"Customer & Audience" },
+  { t:"What competitor might they have just come from?", c:"Customer & Audience" },
+  { t:"What does this customer care about most?", c:"Customer & Audience" },
+  { t:"What would make them trust this brand?", c:"Customer & Audience" },
+  { t:"What's their biggest hesitation before buying?", c:"Customer & Audience" },
+  // Product & Content Strategy
+  { t:"What's the single most important takeaway?", c:"Product & Content Strategy" },
+  { t:"Why this order?", c:"Product & Content Strategy" },
+  { t:"What did you intentionally leave out?", c:"Product & Content Strategy" },
+  { t:"How does the A+ build on the image stack instead of repeating it?", c:"Product & Content Strategy" },
+  { t:"What's the \"aha\" moment you're designing for?", c:"Product & Content Strategy" },
+  { t:"Would a shopper know enough to buy from just the cover and bullets?", c:"Product & Content Strategy" },
+  { t:"How are you differentiating from competitors?", c:"Product & Content Strategy" },
+  { t:"What's the strongest selling point, and is it loud enough?", c:"Product & Content Strategy" },
+  { t:"What's the weakest selling point, and how are you handling it?", c:"Product & Content Strategy" },
+  { t:"What did you prioritize, and what did you sacrifice?", c:"Product & Content Strategy" },
+  // Copy & Design Together
+  { t:"How does the copy support what the design is doing?", c:"Copy & Design Together" },
+  { t:"Is there anywhere copy and design are saying different things?", c:"Copy & Design Together" },
+  { t:"What's the headline doing for the image?", c:"Copy & Design Together" },
+  { t:"Where is design carrying the message vs. copy?", c:"Copy & Design Together" },
+  { t:"Is the copy doing too much or not enough?", c:"Copy & Design Together" },
+  { t:"What's the tone of the copy, and does the design match it?", c:"Copy & Design Together" },
+  { t:"Where could copy be cut without losing meaning?", c:"Copy & Design Together" },
+  { t:"Where could design be simplified without losing impact?", c:"Copy & Design Together" },
+  // Self-Reflection & Process
+  { t:"What inspired this?", c:"Self-Reflection & Process" },
+  { t:"What did you try first that didn't work?", c:"Self-Reflection & Process" },
+  { t:"What would you change with another day on it?", c:"Self-Reflection & Process" },
+  { t:"What are you most proud of?", c:"Self-Reflection & Process" },
+  { t:"What feedback are you specifically hoping for?", c:"Self-Reflection & Process" },
+  { t:"If you had to cut one element, what goes?", c:"Self-Reflection & Process" },
+  { t:"What's something you'd never done before on this one?", c:"Self-Reflection & Process" },
+  { t:"What rule did you break, and was it worth it?", c:"Self-Reflection & Process" },
+  { t:"What's the part you're least sure about?", c:"Self-Reflection & Process" },
+  { t:"What surprised you while working on this?", c:"Self-Reflection & Process" },
+  { t:"What took longer than you expected?", c:"Self-Reflection & Process" },
+  { t:"What came easier than you expected?", c:"Self-Reflection & Process" },
+  // Flow & Experience
+  { t:"How does this hold up on mobile?", c:"Flow & Experience" },
+  { t:"Where might someone click off, and why?", c:"Flow & Experience" },
+  { t:"Does the flow feel intentional?", c:"Flow & Experience" },
+  { t:"What's the weakest link in the journey?", c:"Flow & Experience" },
+  { t:"What's the first thing the eye lands on?", c:"Flow & Experience" },
+  { t:"What's the last thing someone sees before deciding?", c:"Flow & Experience" },
+  { t:"Is there anywhere the pacing feels off?", c:"Flow & Experience" },
+  { t:"Where does the listing lose momentum?", c:"Flow & Experience" },
+  { t:"Where does it pick up?", c:"Flow & Experience" },
+  // Decision-Making
+  { t:"What's a choice you made that you'd defend hardest?", c:"Decision-Making" },
+  { t:"What's a choice you'd reconsider?", c:"Decision-Making" },
+  { t:"What did the brand push for that you weren't sure about?", c:"Decision-Making" },
+  { t:"What did you push for that the brand wasn't sure about?", c:"Decision-Making" },
+  { t:"What constraint shaped this the most?", c:"Decision-Making" },
+  { t:"What would you do if you had no constraints?", c:"Decision-Making" },
+  { t:"What did you almost include but didn't?", c:"Decision-Making" },
+  { t:"What's something you included that you almost didn't?", c:"Decision-Making" },
+  // Big Picture
+  { t:"What's this listing's job?", c:"Big Picture" },
+  { t:"What's the one thing it has to do well?", c:"Big Picture" },
+  { t:"What does success look like for this?", c:"Big Picture" },
+  { t:"How will you know if it's working?", c:"Big Picture" },
+  { t:"What's the story this listing tells?", c:"Big Picture" },
+  { t:"What's the feeling you want someone to walk away with?", c:"Big Picture" },
+  { t:"If this were a billboard, what's the message?", c:"Big Picture" },
+  { t:"What does this say about the brand at a glance?", c:"Big Picture" },
+  // Curveballs
+  { t:"If you had to explain this in one sentence, what would you say?", c:"Curveballs" },
+  { t:"What would make you scroll past this in search?", c:"Curveballs" },
+  { t:"If this product were a movie poster, what's the tagline?", c:"Curveballs" },
+  { t:"What's the most \"you\" thing about this design?", c:"Curveballs" },
+  { t:"What's the least \"you\" thing about this design?", c:"Curveballs" },
+  { t:"If a competitor saw this, what would worry them?", c:"Curveballs" },
+  { t:"What's something here only you would notice?", c:"Curveballs" },
+  { t:"What's the riskiest thing about this listing?", c:"Curveballs" },
+  { t:"What's the safest thing, and is that a problem?", c:"Curveballs" },
+  { t:"If you had to start over tomorrow, what would you keep?", c:"Curveballs" },
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let deck = shuffle(ALL);
+let idx = 0;
+let busy = false;
+
+const scene       = document.getElementById('scene');
+const nextBtn     = document.getElementById('nextBtn');
+const btnIcon     = document.getElementById('btnIcon');
+const btnText     = document.getElementById('btnText');
+const progressFill= document.getElementById('progressFill');
+const counterEl   = document.getElementById('counter');
+
+// Rotation offsets for fanned chips (front → back)
+const ROTS = [0, -4.5, -9, -13.5, -18];
+const OPACITIES = [1, 0.88, 0.76, 0.64, 0.52];
+
+function makeChip(q, rot, z, opacity, isFront, animIn) {
+  const meta = CAT[q.c];
+  const el = document.createElement('div');
+  el.className = 'chip' + (animIn ? ' coming-forward' : '');
+  el.style.cssText = `transform:translateX(-50%) rotate(${rot}deg);z-index:${z};opacity:${opacity};`;
+  el.innerHTML = `
+    <div class="chip-color" style="background:${meta.color}">
+      <p class="chip-question">${q.t}</p>
+    </div>
+    <div class="chip-white">
+      <div class="chip-code">${meta.code}</div>
+      <div class="chip-cat">${q.c}</div>
+      <div class="chip-brand">Design Studio</div>
+    </div>`;
+  return el;
+}
+
+function render(animateIn = false) {
+  scene.innerHTML = '';
+  const count = Math.min(ROTS.length, deck.length - idx);
+
+  // append back → front so front chip is last DOM child
+  for (let i = count - 1; i >= 0; i--) {
+    const qi = idx + i;
+    if (qi >= deck.length) continue;
+    const chip = makeChip(
+      deck[qi],
+      ROTS[i],
+      count - i,
+      OPACITIES[i],
+      i === 0,
+      i === 0 && animateIn
+    );
+    scene.appendChild(chip);
+  }
+  updateUI();
+}
+
+function updateUI() {
+  const total = deck.length;
+  const pos   = idx + 1;
+  const last  = idx >= total - 1;
+
+  counterEl.textContent     = `${pos} / ${total}`;
+  progressFill.style.width  = `${(pos / total) * 100}%`;
+  btnIcon.textContent       = last ? '↺' : '✦';
+  btnText.textContent       = last ? 'Reshuffle' : 'Next Question';
+}
+
+function next() {
+  if (busy) return;
+
+  if (idx >= deck.length - 1) {
+    deck = shuffle(ALL);
+    idx  = 0;
+    render(true);
+    return;
+  }
+
+  busy = true;
+  nextBtn.disabled = true;
+
+  // Animate front chip away (last DOM child = highest z)
+  const front = scene.querySelector('.chip:last-child');
+  if (front) front.classList.add('flipping-back');
+
+  setTimeout(() => {
+    idx++;
+    render(true);
+    busy = false;
+    nextBtn.disabled = false;
+  }, 390);
+}
+
+nextBtn.addEventListener('click', next);
+
+document.addEventListener('keydown', e => {
+  if ([' ', 'ArrowRight', 'ArrowDown', 'Enter'].includes(e.key)) {
+    e.preventDefault();
+    next();
+  }
+});
+
+render(false);
+</script>
+</body>
+</html>
