@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ Design Questions ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Deep space / holographic background ── */
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 18% 28%, rgba(140,0,255,0.28) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 68%, rgba(255,20,147,0.22) 0%, transparent 48%),
+    radial-gradient(ellipse at 60% 10%, rgba(0,200,255,0.18) 0%, transparent 42%),
+    radial-gradient(ellipse at 40% 85%, rgba(57,255,20,0.12) 0%, transparent 40%),
+    #07001a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Fredoka One', cursive;
+}
+
+/* Animated holographic shimmer layer */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    118deg,
+    transparent 0%,
+    rgba(255,20,147,0.07) 18%,
+    rgba(0,255,255,0.09) 35%,
+    transparent 48%,
+    rgba(191,0,255,0.07) 62%,
+    rgba(57,255,20,0.06) 78%,
+    transparent 100%
+  );
+  background-size: 300% 300%;
+  animation: holo-sweep 7s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes holo-sweep {
+  0%   { background-position: 0% 0%;    opacity: 0.5; }
+  33%  { background-position: 100% 40%; opacity: 1;   }
+  66%  { background-position: 40% 100%; opacity: 0.6; }
+  100% { background-position: 0% 100%;  opacity: 1;   }
+}
+
+/* ── Floating background critters ── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floater {
+  position: absolute;
+  user-select: none;
+  line-height: 1;
+}
+
+.floater.dolphin {
+  filter: drop-shadow(0 0 8px rgba(0,255,255,0.7)) drop-shadow(0 0 16px rgba(0,200,255,0.4));
+  animation: swim var(--dur) ease-in-out infinite var(--delay);
+}
+
+.floater.star {
+  filter: drop-shadow(0 0 5px rgba(255,255,150,0.9));
+  animation: twinkle var(--dur) ease-in-out infinite alternate var(--delay);
+}
+
+.floater.sparkle {
+  filter: drop-shadow(0 0 4px var(--c));
+  animation: spin-glow var(--dur) linear infinite var(--delay);
+  color: var(--c);
+}
+
+@keyframes swim {
+  0%,100% { transform: translateY(0)    rotate(var(--tilt)); }
+  50%      { transform: translateY(-22px) rotate(calc(var(--tilt) + 14deg)); }
+}
+
+@keyframes twinkle {
+  0%   { opacity: 0.1; transform: scale(0.6) rotate(0deg); }
+  100% { opacity: 1;   transform: scale(1.3) rotate(25deg); }
+}
+
+@keyframes spin-glow {
+  0%   { transform: rotate(0deg)   scale(1);    opacity: 0.7; }
+  50%  { transform: rotate(180deg) scale(1.4);  opacity: 1;   }
+  100% { transform: rotate(360deg) scale(1);    opacity: 0.7; }
+}
+
+/* ── Shared rainbow scroll ── */
+@keyframes rainbow-scroll {
+  0%   { background-position: 0%;   }
+  100% { background-position: 300%; }
+}
+
+/* ── Page layout ── */
+.page {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* ── Title ── */
+.page-title {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  text-align: center;
+  line-height: 1.15;
+  background: linear-gradient(90deg,
+    #ff1493, #ff6600, #ffe600,
+    #39ff14, #00ffff, #bf00ff, #ff1493
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rainbow-scroll 3s linear infinite;
+  filter:
+    drop-shadow(0 0 14px rgba(255,20,147,0.65))
+    drop-shadow(0 0 28px rgba(0,255,255,0.35));
+}
+
+.title-sub {
+  display: block;
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  background: linear-gradient(90deg,
+    #bf00ff, #00ffff, #ff1493, #bf00ff
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rainbow-scroll 4s linear infinite reverse;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+  filter: drop-shadow(0 0 8px rgba(191,0,255,0.6));
+}
+
+/* ── Card ── */
+.card-outer {
+  width: 100%;
+  transform-origin: center center;
+}
+
+.card-outer.exiting {
+  animation: card-out 0.2s cubic-bezier(0.4,0,1,1) forwards;
+}
+
+.card-outer.entering {
+  animation: card-in 0.52s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes card-out {
+  0%   { transform: scale(1) rotate(0deg);    opacity: 1; }
+  100% { transform: scale(0.72) rotate(-9deg); opacity: 0; }
+}
+
+@keyframes card-in {
+  0%   { transform: scale(0.55) rotate(11deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg);     opacity: 1; }
+}
+
+/* Animated rainbow border via gradient padding */
+.card-border {
+  padding: 5px;
+  border-radius: 30px;
+  background: linear-gradient(135deg,
+    #ff1493, #ff6600, #ffe600,
+    #39ff14, #00ffff, #bf00ff, #ff1493
+  );
+  background-size: 300%;
+  animation: rainbow-scroll 2.5s linear infinite;
+  box-shadow:
+    0 0 22px  rgba(255,20,147,0.6),
+    0 0 44px  rgba(0,255,255,0.35),
+    0 0 80px  rgba(191,0,255,0.28),
+    0 14px 48px rgba(0,0,0,0.6);
+}
+
+.card-inner {
+  background: #fff;
+  border-radius: 25px;
+  padding: 34px 30px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  min-height: 280px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Holographic sheen inside the white card */
+.card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  background: linear-gradient(
+    135deg,
+    rgba(255,105,180,0.08) 0%,
+    rgba(255,255,255,0) 35%,
+    rgba(0,255,255,0.07) 65%,
+    rgba(191,0,255,0.06) 100%
+  );
+  background-size: 200% 200%;
+  animation: card-sheen 5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes card-sheen {
+  0%   { background-position: 0% 0%;     }
+  100% { background-position: 100% 100%; }
+}
+
+/* Category badge */
+.cat-badge {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  padding: 5px 20px;
+  border-radius: 50px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  background: var(--badge-bg, linear-gradient(90deg,#ff1493,#bf00ff));
+  box-shadow: 0 0 16px var(--badge-glow, rgba(255,20,147,0.8)), 0 2px 8px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* Question text — dark rainbow so it's readable on white */
+.question-text {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(1.25rem, 4vw, 1.85rem);
+  line-height: 1.35;
+  text-align: center;
+  background: linear-gradient(135deg,
+    #c4006a, #c44000, #7a5500,
+    #006600, #005f7a, #5000c4, #c4006a
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: rainbow-scroll 6s linear infinite;
+  position: relative;
+  z-index: 1;
+}
+
+/* Emoji decorations row */
+.card-deco {
+  font-size: 1.5rem;
+  letter-spacing: 0.25em;
+  position: relative;
+  z-index: 1;
+  animation: deco-bob 2.2s ease-in-out infinite alternate;
+  filter:
+    drop-shadow(0 0 5px rgba(255,100,200,0.7))
+    drop-shadow(0 0 10px rgba(0,255,255,0.4));
+}
+
+@keyframes deco-bob {
+  0%   { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-5px) scale(1.06); }
+}
+
+/* ── Next button ── */
+.next-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  padding: 16px 48px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg,
+    #ff1493, #ff6600, #ffe600,
+    #39ff14, #00ffff, #bf00ff, #ff1493
+  );
+  background-size: 300%;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  cursor: pointer;
+  animation: rainbow-scroll 2.5s linear infinite;
+  box-shadow:
+    0 0 22px  rgba(255,20,147,0.7),
+    0 0 44px  rgba(0,255,255,0.35),
+    0 8px 24px rgba(0,0,0,0.45);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  position: relative;
+}
+
+.next-btn::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 54px;
+  background: inherit;
+  background-size: inherit;
+  animation: inherit;
+  filter: blur(12px);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.next-btn:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow:
+    0 0 34px rgba(255,20,147,0.9),
+    0 0 68px rgba(0,255,255,0.5),
+    0 14px 36px rgba(0,0,0,0.45);
+}
+
+.next-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.96);
+}
+
+.next-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+/* ── Progress ── */
+.progress-wrap {
+  width: 220px;
+  height: 6px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(191,0,255,0.3);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #ff1493, #00ffff, #bf00ff, #ff1493);
+  background-size: 300%;
+  animation: rainbow-scroll 2s linear infinite;
+  transition: width 0.4s ease;
+}
+
+/* ── Counter ── */
+.counter {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px rgba(255,100,200,0.4);
+}
+
+/* ── Hint ── */
+.hint {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.14em;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer" id="bgLayer"></div>
+
+<div class="page">
+
+  <h1 class="page-title">
+    ✦ Design Questions ✦
+    <span class="title-sub">🐬 &nbsp; a lisa frank experience &nbsp; 🐬</span>
+  </h1>
+
+  <div class="card-outer" id="cardOuter">
+    <div class="card-border">
+      <div class="card-inner">
+        <div class="cat-badge" id="catBadge"></div>
+        <p class="question-text" id="questionText"></p>
+        <div class="card-deco" id="cardDeco">🐬 ✦ 🌟</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" id="nextBtn">✦ Next Question ✦</button>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="counter" id="counter"></div>
+  <div class="hint">space or → to advance</div>
+
+</div>
+
+<script>
+// ── Category config ────────────────────────────────────────────────────────
+const CAT_META = {
+  "Design & Visual Choices":    { bg:"linear-gradient(135deg,#e8007d,#bf00cc)", glow:"rgba(232,0,125,0.8)" },
+  "Brand Identity & Voice":     { bg:"linear-gradient(135deg,#ff5500,#e8c000)", glow:"rgba(255,85,0,0.8)"  },
+  "Customer & Audience":        { bg:"linear-gradient(135deg,#00b890,#00c8ff)", glow:"rgba(0,184,144,0.8)" },
+  "Product & Content Strategy": { bg:"linear-gradient(135deg,#7000cc,#c000ff)", glow:"rgba(112,0,204,0.8)" },
+  "Copy & Design Together":     { bg:"linear-gradient(135deg,#c08000,#39c000)", glow:"rgba(192,128,0,0.8)" },
+  "Self-Reflection & Process":  { bg:"linear-gradient(135deg,#cc2000,#ff5500)", glow:"rgba(204,32,0,0.8)"  },
+  "Flow & Experience":          { bg:"linear-gradient(135deg,#0070cc,#00c8ff)", glow:"rgba(0,112,204,0.8)" },
+  "Decision-Making":            { bg:"linear-gradient(135deg,#007040,#00c878)", glow:"rgba(0,112,64,0.8)"  },
+  "Big Picture":                { bg:"linear-gradient(135deg,#1840b0,#7000cc)", glow:"rgba(24,64,176,0.8)" },
+  "Curveballs":                 { bg:"linear-gradient(135deg,#cc0040,#ff1493)", glow:"rgba(204,0,64,0.8)"  },
+};
+
+// ── Questions ──────────────────────────────────────────────────────────────
+const ALL = [
+  { t:"What made you choose this color palette?", c:"Design & Visual Choices" },
+  { t:"Why did you pick this font pairing?", c:"Design & Visual Choices" },
+  { t:"What's the visual hierarchy you're trying to establish?", c:"Design & Visual Choices" },
+  { t:"Why this layout over a different one?", c:"Design & Visual Choices" },
+  { t:"What was the hardest design decision you made?", c:"Design & Visual Choices" },
+  { t:"How did you decide what to feature first?", c:"Design & Visual Choices" },
+  { t:"What's one design choice you're unsure about?", c:"Design & Visual Choices" },
+  { t:"Why did you frame the product this way?", c:"Design & Visual Choices" },
+  { t:"How are you using white space here?", c:"Design & Visual Choices" },
+  { t:"What's the focal point, and how are you guiding the eye to it?", c:"Design & Visual Choices" },
+  { t:"What mood are you trying to create visually?", c:"Design & Visual Choices" },
+  { t:"Why this style over a more minimal or maximal approach?", c:"Design & Visual Choices" },
+  { t:"What's the role of contrast in this design?", c:"Design & Visual Choices" },
+  { t:"How did you decide on image vs. graphic vs. text-heavy?", c:"Design & Visual Choices" },
+  { t:"What design element are you most proud of?", c:"Design & Visual Choices" },
+  { t:"How does this reflect the brand's personality?", c:"Brand Identity & Voice" },
+  { t:"If the brand were a person, who would it be?", c:"Brand Identity & Voice" },
+  { t:"What's one thing you want shoppers to feel immediately?", c:"Brand Identity & Voice" },
+  { t:"How did the brand guide influence your choices?", c:"Brand Identity & Voice" },
+  { t:"Where did you push the brand guide vs. stick to it?", c:"Brand Identity & Voice" },
+  { t:"What does this brand do that competitors don't?", c:"Brand Identity & Voice" },
+  { t:"How would you describe the brand voice in three words?", c:"Brand Identity & Voice" },
+  { t:"What part of the brand story are you telling here?", c:"Brand Identity & Voice" },
+  { t:"Does this feel on-brand or like a stretch?", c:"Brand Identity & Voice" },
+  { t:"What's the brand's biggest visual signature?", c:"Brand Identity & Voice" },
+  { t:"Who is the customer you pictured while designing this?", c:"Customer & Audience" },
+  { t:"What problem are they trying to solve?", c:"Customer & Audience" },
+  { t:"What do they need to see in the first 3 seconds?", c:"Customer & Audience" },
+  { t:"What objection might they have?", c:"Customer & Audience" },
+  { t:"Where in the buying journey are they?", c:"Customer & Audience" },
+  { t:"What emotion are you trying to evoke?", c:"Customer & Audience" },
+  { t:"What competitor might they have just come from?", c:"Customer & Audience" },
+  { t:"What does this customer care about most?", c:"Customer & Audience" },
+  { t:"What would make them trust this brand?", c:"Customer & Audience" },
+  { t:"What's their biggest hesitation before buying?", c:"Customer & Audience" },
+  { t:"What's the single most important takeaway?", c:"Product & Content Strategy" },
+  { t:"Why this order?", c:"Product & Content Strategy" },
+  { t:"What did you intentionally leave out?", c:"Product & Content Strategy" },
+  { t:"How does the A+ build on the image stack instead of repeating it?", c:"Product & Content Strategy" },
+  { t:"What's the \"aha\" moment you're designing for?", c:"Product & Content Strategy" },
+  { t:"Would a shopper know enough to buy from just the cover and bullets?", c:"Product & Content Strategy" },
+  { t:"How are you differentiating from competitors?", c:"Product & Content Strategy" },
+  { t:"What's the strongest selling point, and is it loud enough?", c:"Product & Content Strategy" },
+  { t:"What's the weakest selling point, and how are you handling it?", c:"Product & Content Strategy" },
+  { t:"What did you prioritize, and what did you sacrifice?", c:"Product & Content Strategy" },
+  { t:"How does the copy support what the design is doing?", c:"Copy & Design Together" },
+  { t:"Is there anywhere copy and design are saying different things?", c:"Copy & Design Together" },
+  { t:"What's the headline doing for the image?", c:"Copy & Design Together" },
+  { t:"Where is design carrying the message vs. copy?", c:"Copy & Design Together" },
+  { t:"Is the copy doing too much or not enough?", c:"Copy & Design Together" },
+  { t:"What's the tone of the copy, and does the design match it?", c:"Copy & Design Together" },
+  { t:"Where could copy be cut without losing meaning?", c:"Copy & Design Together" },
+  { t:"Where could design be simplified without losing impact?", c:"Copy & Design Together" },
+  { t:"What inspired this?", c:"Self-Reflection & Process" },
+  { t:"What did you try first that didn't work?", c:"Self-Reflection & Process" },
+  { t:"What would you change with another day on it?", c:"Self-Reflection & Process" },
+  { t:"What are you most proud of?", c:"Self-Reflection & Process" },
+  { t:"What feedback are you specifically hoping for?", c:"Self-Reflection & Process" },
+  { t:"If you had to cut one element, what goes?", c:"Self-Reflection & Process" },
+  { t:"What's something you'd never done before on this one?", c:"Self-Reflection & Process" },
+  { t:"What rule did you break, and was it worth it?", c:"Self-Reflection & Process" },
+  { t:"What's the part you're least sure about?", c:"Self-Reflection & Process" },
+  { t:"What surprised you while working on this?", c:"Self-Reflection & Process" },
+  { t:"What took longer than you expected?", c:"Self-Reflection & Process" },
+  { t:"What came easier than you expected?", c:"Self-Reflection & Process" },
+  { t:"How does this hold up on mobile?", c:"Flow & Experience" },
+  { t:"Where might someone click off, and why?", c:"Flow & Experience" },
+  { t:"Does the flow feel intentional?", c:"Flow & Experience" },
+  { t:"What's the weakest link in the journey?", c:"Flow & Experience" },
+  { t:"What's the first thing the eye lands on?", c:"Flow & Experience" },
+  { t:"What's the last thing someone sees before deciding?", c:"Flow & Experience" },
+  { t:"Is there anywhere the pacing feels off?", c:"Flow & Experience" },
+  { t:"Where does the listing lose momentum?", c:"Flow & Experience" },
+  { t:"Where does it pick up?", c:"Flow & Experience" },
+  { t:"What's a choice you made that you'd defend hardest?", c:"Decision-Making" },
+  { t:"What's a choice you'd reconsider?", c:"Decision-Making" },
+  { t:"What did the brand push for that you weren't sure about?", c:"Decision-Making" },
+  { t:"What did you push for that the brand wasn't sure about?", c:"Decision-Making" },
+  { t:"What constraint shaped this the most?", c:"Decision-Making" },
+  { t:"What would you do if you had no constraints?", c:"Decision-Making" },
+  { t:"What did you almost include but didn't?", c:"Decision-Making" },
+  { t:"What's something you included that you almost didn't?", c:"Decision-Making" },
+  { t:"What's this listing's job?", c:"Big Picture" },
+  { t:"What's the one thing it has to do well?", c:"Big Picture" },
+  { t:"What does success look like for this?", c:"Big Picture" },
+  { t:"How will you know if it's working?", c:"Big Picture" },
+  { t:"What's the story this listing tells?", c:"Big Picture" },
+  { t:"What's the feeling you want someone to walk away with?", c:"Big Picture" },
+  { t:"If this were a billboard, what's the message?", c:"Big Picture" },
+  { t:"What does this say about the brand at a glance?", c:"Big Picture" },
+  { t:"If you had to explain this in one sentence, what would you say?", c:"Curveballs" },
+  { t:"What would make you scroll past this in search?", c:"Curveballs" },
+  { t:"If this product were a movie poster, what's the tagline?", c:"Curveballs" },
+  { t:"What's the most \"you\" thing about this design?", c:"Curveballs" },
+  { t:"What's the least \"you\" thing about this design?", c:"Curveballs" },
+  { t:"If a competitor saw this, what would worry them?", c:"Curveballs" },
+  { t:"What's something here only you would notice?", c:"Curveballs" },
+  { t:"What's the riskiest thing about this listing?", c:"Curveballs" },
+  { t:"What's the safest thing, and is that a problem?", c:"Curveballs" },
+  { t:"If you had to start over tomorrow, what would you keep?", c:"Curveballs" },
+];
+
+// ── Emoji decorations ──────────────────────────────────────────────────────
+const DECOS = [
+  "🐬 ✦ 🌟",  "🌈 💖 ⭐",  "🦄 ✨ 💎",
+  "🐬 🌸 💫",  "⭐ 🎀 🐬",  "💝 🌟 🦋",
+  "🐬 🐬 ✦",  "🌈 ✨ 🌸",  "💎 💖 ⭐",
+  "🎀 🦄 🌟",  "🐬 💜 ✨",  "🌸 🐬 🌈",
+];
+
+// ── Build floating background layer ───────────────────────────────────────
+(function buildBg() {
+  const layer = document.getElementById('bgLayer');
+
+  const dolphins = [
+    { top:"8%",  left:"4%",  size:"2.4rem", dur:"4.8s", delay:"0s",    tilt:"-8deg"  },
+    { top:"72%", left:"7%",  size:"1.8rem", dur:"5.5s", delay:"1.2s",  tilt:"-12deg" },
+    { top:"20%", left:"88%", size:"2.8rem", dur:"4.2s", delay:"0.5s",  tilt:"8deg"   },
+    { top:"60%", left:"85%", size:"2rem",   dur:"6s",   delay:"2.1s",  tilt:"5deg"   },
+    { top:"45%", left:"2%",  size:"1.5rem", dur:"5.2s", delay:"3s",    tilt:"-6deg"  },
+    { top:"85%", left:"55%", size:"2.2rem", dur:"4.6s", delay:"1.8s",  tilt:"-4deg"  },
+    { top:"5%",  left:"50%", size:"1.6rem", dur:"5.8s", delay:"0.8s",  tilt:"10deg"  },
+  ];
+
+  dolphins.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'floater dolphin';
+    el.textContent = '🐬';
+    el.style.cssText = `top:${d.top};left:${d.left};font-size:${d.size};--dur:${d.dur};--delay:${d.delay};--tilt:${d.tilt};`;
+    layer.appendChild(el);
+  });
+
+  // Stars — scatter all over
+  const starEmoji = ['⭐','🌟','✨','💫'];
+  const neonCols  = ['#ff69b4','#00ffff','#bf00ff','#39ff14','#ffe600','#ff6600'];
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    const isStar = Math.random() > 0.35;
+    el.className = `floater ${isStar ? 'star' : 'sparkle'}`;
+    el.textContent = isStar
+      ? starEmoji[Math.floor(Math.random() * starEmoji.length)]
+      : ['✦','✧','★','✶','✸'][Math.floor(Math.random() * 5)];
+    el.style.cssText = [
+      `top:${2 + Math.random() * 94}%`,
+      `left:${1 + Math.random() * 96}%`,
+      `font-size:${0.7 + Math.random() * 1.4}rem`,
+      `--dur:${1.4 + Math.random() * 2.8}s`,
+      `--delay:-${Math.random() * 3}s`,
+      `--c:${neonCols[Math.floor(Math.random() * neonCols.length)]}`,
+    ].join(';');
+    layer.appendChild(el);
+  }
+
+  // Extras
+  ['🌈','💎','🎀','💖','🦋','🌸'].forEach((emoji, i) => {
+    const el = document.createElement('div');
+    el.className = 'floater star';
+    el.textContent = emoji;
+    el.style.cssText = `top:${15 + i * 14}%;left:${i % 2 === 0 ? 93 : 3}%;font-size:${1.2 + Math.random()}rem;--dur:${3 + i * 0.4}s;--delay:-${i * 0.7}s;`;
+    layer.appendChild(el);
+  });
+})();
+
+// ── App state ──────────────────────────────────────────────────────────────
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+let deck = shuffle(ALL);
+let idx  = 0;
+let busy = false;
+
+const cardOuter   = document.getElementById('cardOuter');
+const catBadge    = document.getElementById('catBadge');
+const questionText= document.getElementById('questionText');
+const cardDeco    = document.getElementById('cardDeco');
+const nextBtn     = document.getElementById('nextBtn');
+const progressFill= document.getElementById('progressFill');
+const counter     = document.getElementById('counter');
+
+function render() {
+  const q    = deck[idx];
+  const meta = CAT_META[q.c];
+
+  catBadge.textContent          = q.c;
+  catBadge.style.background     = meta.bg;
+  catBadge.style.setProperty('--badge-glow', meta.glow);
+  catBadge.style.boxShadow      = `0 0 16px ${meta.glow}, 0 2px 8px rgba(0,0,0,0.2)`;
+
+  questionText.textContent = q.t;
+  cardDeco.textContent     = DECOS[Math.floor(Math.random() * DECOS.length)];
+
+  progressFill.style.width = `${((idx + 1) / deck.length) * 100}%`;
+  counter.textContent      = `${idx + 1} / ${deck.length}`;
+
+  const isLast = idx >= deck.length - 1;
+  nextBtn.textContent = isLast ? '✦ Reshuffle ✦' : '✦ Next Question ✦';
+}
+
+function next() {
+  if (busy) return;
+  busy = true;
+  nextBtn.disabled = true;
+
+  cardOuter.classList.remove('entering');
+  cardOuter.classList.add('exiting');
+
+  setTimeout(() => {
+    if (idx >= deck.length - 1) { deck = shuffle(ALL); idx = 0; }
+    else idx++;
+
+    render();
+    cardOuter.classList.remove('exiting');
+    void cardOuter.offsetWidth; // force reflow
+    cardOuter.classList.add('entering');
+
+    setTimeout(() => {
+      cardOuter.classList.remove('entering');
+      busy = false;
+      nextBtn.disabled = false;
+    }, 520);
+  }, 200);
+}
+
+nextBtn.addEventListener('click', next);
+document.addEventListener('keydown', e => {
+  if ([' ','ArrowRight','Enter'].includes(e.key)) { e.preventDefault(); next(); }
+});
+
+render();
+</script>
+</body>
+</html>
