@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Studio — Design Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: #CEC7BB;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 16px;
+  font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+}
+
+/* ── Paper spread ── */
+.spread {
+  width: 100%;
+  max-width: 1000px;
+  background: #FAF7F1;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.07),
+    0 6px 20px rgba(0,0,0,0.16),
+    0 20px 56px rgba(0,0,0,0.12);
+  transition: opacity 0.28s ease;
+  position: relative;
+}
+
+/* Center gutter — simulates two-page spread */
+.spread::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.07) 8%,
+    rgba(0,0,0,0.07) 92%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+.spread.fading { opacity: 0; }
+
+/* ── Masthead ── */
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px 44px 16px;
+  border-bottom: 2.5px solid #1A1A18;
+}
+
+.mag-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.52em;
+  text-transform: uppercase;
+  color: #1A1A18;
+}
+
+.masthead-cat {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: color 0.35s ease;
+}
+
+.mag-meta {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9A9288;
+  font-style: italic;
+}
+
+/* ── 3-column content grid ── */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 40px 1.6fr 40px 1fr;
+  align-items: stretch;
+  padding: 38px 44px 30px;
+  min-height: 500px;
+}
+
+.col-rule {
+  display: flex;
+  justify-content: center;
+}
+
+.col-rule::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 100%;
+  background: #CCC5B8;
+}
+
+/* ── Left column ── */
+.col-left { padding-right: 6px; }
+
+.article-kicker {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 9px;
+  transition: color 0.35s ease;
+}
+
+.article-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.24;
+  color: #1A1A18;
+  margin-bottom: 16px;
+}
+
+.body-copy {
+  font-size: 13.5px;
+  line-height: 1.74;
+  color: #28261F;
+  hyphens: auto;
+  text-align: justify;
+}
+
+.body-copy + .body-copy { margin-top: 11px; }
+
+/* Drop cap — color set via CSS custom property on the element */
+.body-copy.dropcap::first-letter {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 4em;
+  font-weight: 900;
+  float: left;
+  line-height: 0.76;
+  margin-right: 5px;
+  margin-top: 7px;
+  color: var(--dc, #1A1A18);
+}
+
+.body-bold {
+  font-size: 13.5px;
+  font-weight: 600;
+  font-style: italic;
+  color: #1A1A18;
+  line-height: 1.55;
+  border-top: 1.5px solid #CCC5B8;
+  border-bottom: 1.5px solid #CCC5B8;
+  padding: 10px 0;
+  margin: 15px 0;
+}
+
+/* ── Center column — pull quote ── */
+.col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  text-align: center;
+}
+
+.open-mark {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 6.5rem;
+  line-height: 0.55;
+  align-self: flex-start;
+  margin-left: -6px;
+  transition: color 0.35s ease;
+  user-select: none;
+}
+
+.pull-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+  color: #1A1A18;
+  text-align: center;
+  margin: 6px 0;
+}
+
+.close-mark {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 6.5rem;
+  line-height: 0.55;
+  align-self: flex-end;
+  margin-right: -6px;
+  transition: color 0.35s ease;
+  user-select: none;
+}
+
+.pull-foot {
+  margin-top: 22px;
+  padding-top: 13px;
+  width: 100%;
+  border-top: 1px solid #CCC5B8;
+  text-align: center;
+}
+
+.pull-foot-label {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9A9288;
+  font-style: italic;
+}
+
+.pull-foot-cat {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 3px;
+  transition: color 0.35s ease;
+}
+
+/* ── Right column ── */
+.col-right { padding-left: 6px; }
+
+.stat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3.8rem;
+  font-weight: 900;
+  line-height: 1;
+  transition: color 0.35s ease;
+}
+
+.stat-label {
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9A9288;
+  margin-bottom: 18px;
+  margin-top: 2px;
+}
+
+/* ── Folio / footer ── */
+.folio {
+  border-top: 2.5px solid #1A1A18;
+  padding: 11px 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.folio-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.folio-page {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #9A9288;
+  text-transform: uppercase;
+}
+
+.folio-section {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #9A9288;
+  font-style: italic;
+  transition: color 0.35s ease;
+}
+
+.folio-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.progress-rail {
+  width: 100px;
+  height: 1px;
+  background: #CCC5B8;
+  position: relative;
+}
+
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #1A1A18;
+  transition: width 0.38s ease;
+}
+
+.next-btn {
+  background: none;
+  border: none;
+  border-bottom: 1px solid #1A1A18;
+  padding: 3px 0;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #1A1A18;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.next-btn:hover:not(:disabled) { opacity: 0.45; }
+.next-btn:disabled { opacity: 0.25; cursor: default; }
+</style>
+</head>
+<body>
+
+<div class="spread" id="spread">
+
+  <div class="masthead">
+    <span class="mag-name">The Studio</span>
+    <span class="masthead-cat" id="mastheadCat"></span>
+    <span class="mag-meta">Vol. 4 &nbsp;·&nbsp; No. 12 &nbsp;·&nbsp; 2026</span>
+  </div>
+
+  <div class="content">
+
+    <div class="col-left">
+      <div class="article-kicker" id="kicker"></div>
+      <h2 class="article-headline" id="headline"></h2>
+      <p class="body-copy dropcap" id="p1"></p>
+      <p class="body-copy" id="p2"></p>
+      <div class="body-bold" id="bold"></div>
+      <p class="body-copy" id="p3"></p>
+    </div>
+
+    <div class="col-rule"></div>
+
+    <div class="col-center">
+      <div class="open-mark" id="qOpen">&ldquo;</div>
+      <p class="pull-text" id="pullText"></p>
+      <div class="close-mark" id="qClose">&rdquo;</div>
+      <div class="pull-foot">
+        <div class="pull-foot-label">from the review session</div>
+        <div class="pull-foot-cat" id="pullCat"></div>
+      </div>
+    </div>
+
+    <div class="col-rule"></div>
+
+    <div class="col-right">
+      <div class="stat-num" id="statNum"></div>
+      <div class="stat-label" id="statLabel"></div>
+      <p class="body-copy" id="p4"></p>
+      <p class="body-copy" id="p5"></p>
+      <p class="body-copy" id="p6"></p>
+    </div>
+
+  </div>
+
+  <div class="folio">
+    <div class="folio-left">
+      <span class="folio-page" id="folioPg"></span>
+      <span class="folio-section" id="folioSec"></span>
+    </div>
+    <div class="folio-right">
+      <div class="progress-rail">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button class="next-btn" id="nextBtn">Next Question &thinsp;→</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CAT_META = {
+  "Design & Visual Choices":    { color:"#BF5E8A", kicker:"On Craft",       headline:"The Language of Form",        stat:"01",  statLabel:"Rule to interrogate" },
+  "Brand Identity & Voice":     { color:"#C85535", kicker:"On Identity",    headline:"Speaking Without Words",      stat:"10",  statLabel:"Brand essentials" },
+  "Customer & Audience":        { color:"#2E9070", kicker:"On Empathy",     headline:"Designing for Someone Else",  stat:"3s",  statLabel:"To earn attention" },
+  "Product & Content Strategy": { color:"#7050B0", kicker:"On Strategy",    headline:"What the Page Must Do",       stat:"01",  statLabel:"Job to be done" },
+  "Copy & Design Together":     { color:"#B87820", kicker:"On Language",    headline:"When Words Meet Images",      stat:"2×",  statLabel:"Power of alignment" },
+  "Self-Reflection & Process":  { color:"#C06828", kicker:"On Process",     headline:"Notes from the Studio",       stat:"∞",   statLabel:"Iterations possible" },
+  "Flow & Experience":          { color:"#2288B8", kicker:"On Journey",     headline:"The Path Through the Screen", stat:"01",  statLabel:"Weakest link" },
+  "Decision-Making":            { color:"#2E8C52", kicker:"On Judgment",    headline:"The Choices That Define It",  stat:"01",  statLabel:"Constraint that shaped it" },
+  "Big Picture":                { color:"#3E4CA8", kicker:"On Meaning",     headline:"What It All Means",           stat:"∞",   statLabel:"Ways to read it" },
+  "Curveballs":                 { color:"#C02858", kicker:"On Honesty",     headline:"Questions You Didn't Expect", stat:"?",   statLabel:"The unexpected angle" },
+};
+
+const ALL = [
+  { t:"What made you choose this color palette?", c:"Design & Visual Choices" },
+  { t:"Why did you pick this font pairing?", c:"Design & Visual Choices" },
+  { t:"What's the visual hierarchy you're trying to establish?", c:"Design & Visual Choices" },
+  { t:"Why this layout over a different one?", c:"Design & Visual Choices" },
+  { t:"What was the hardest design decision you made?", c:"Design & Visual Choices" },
+  { t:"How did you decide what to feature first?", c:"Design & Visual Choices" },
+  { t:"What's one design choice you're unsure about?", c:"Design & Visual Choices" },
+  { t:"Why did you frame the product this way?", c:"Design & Visual Choices" },
+  { t:"How are you using white space here?", c:"Design & Visual Choices" },
+  { t:"What's the focal point, and how are you guiding the eye to it?", c:"Design & Visual Choices" },
+  { t:"What mood are you trying to create visually?", c:"Design & Visual Choices" },
+  { t:"Why this style over a more minimal or maximal approach?", c:"Design & Visual Choices" },
+  { t:"What's the role of contrast in this design?", c:"Design & Visual Choices" },
+  { t:"How did you decide on image vs. graphic vs. text-heavy?", c:"Design & Visual Choices" },
+  { t:"What design element are you most proud of?", c:"Design & Visual Choices" },
+  { t:"How does this reflect the brand's personality?", c:"Brand Identity & Voice" },
+  { t:"If the brand were a person, who would it be?", c:"Brand Identity & Voice" },
+  { t:"What's one thing you want shoppers to feel immediately?", c:"Brand Identity & Voice" },
+  { t:"How did the brand guide influence your choices?", c:"Brand Identity & Voice" },
+  { t:"Where did you push the brand guide vs. stick to it?", c:"Brand Identity & Voice" },
+  { t:"What does this brand do that competitors don't?", c:"Brand Identity & Voice" },
+  { t:"How would you describe the brand voice in three words?", c:"Brand Identity & Voice" },
+  { t:"What part of the brand story are you telling here?", c:"Brand Identity & Voice" },
+  { t:"Does this feel on-brand or like a stretch?", c:"Brand Identity & Voice" },
+  { t:"What's the brand's biggest visual signature?", c:"Brand Identity & Voice" },
+  { t:"Who is the customer you pictured while designing this?", c:"Customer & Audience" },
+  { t:"What problem are they trying to solve?", c:"Customer & Audience" },
+  { t:"What do they need to see in the first 3 seconds?", c:"Customer & Audience" },
+  { t:"What objection might they have?", c:"Customer & Audience" },
+  { t:"Where in the buying journey are they?", c:"Customer & Audience" },
+  { t:"What emotion are you trying to evoke?", c:"Customer & Audience" },
+  { t:"What competitor might they have just come from?", c:"Customer & Audience" },
+  { t:"What does this customer care about most?", c:"Customer & Audience" },
+  { t:"What would make them trust this brand?", c:"Customer & Audience" },
+  { t:"What's their biggest hesitation before buying?", c:"Customer & Audience" },
+  { t:"What's the single most important takeaway?", c:"Product & Content Strategy" },
+  { t:"Why this order?", c:"Product & Content Strategy" },
+  { t:"What did you intentionally leave out?", c:"Product & Content Strategy" },
+  { t:"How does the A+ build on the image stack instead of repeating it?", c:"Product & Content Strategy" },
+  { t:"What's the \"aha\" moment you're designing for?", c:"Product & Content Strategy" },
+  { t:"Would a shopper know enough to buy from just the cover and bullets?", c:"Product & Content Strategy" },
+  { t:"How are you differentiating from competitors?", c:"Product & Content Strategy" },
+  { t:"What's the strongest selling point, and is it loud enough?", c:"Product & Content Strategy" },
+  { t:"What's the weakest selling point, and how are you handling it?", c:"Product & Content Strategy" },
+  { t:"What did you prioritize, and what did you sacrifice?", c:"Product & Content Strategy" },
+  { t:"How does the copy support what the design is doing?", c:"Copy & Design Together" },
+  { t:"Is there anywhere copy and design are saying different things?", c:"Copy & Design Together" },
+  { t:"What's the headline doing for the image?", c:"Copy & Design Together" },
+  { t:"Where is design carrying the message vs. copy?", c:"Copy & Design Together" },
+  { t:"Is the copy doing too much or not enough?", c:"Copy & Design Together" },
+  { t:"What's the tone of the copy, and does the design match it?", c:"Copy & Design Together" },
+  { t:"Where could copy be cut without losing meaning?", c:"Copy & Design Together" },
+  { t:"Where could design be simplified without losing impact?", c:"Copy & Design Together" },
+  { t:"What inspired this?", c:"Self-Reflection & Process" },
+  { t:"What did you try first that didn't work?", c:"Self-Reflection & Process" },
+  { t:"What would you change with another day on it?", c:"Self-Reflection & Process" },
+  { t:"What are you most proud of?", c:"Self-Reflection & Process" },
+  { t:"What feedback are you specifically hoping for?", c:"Self-Reflection & Process" },
+  { t:"If you had to cut one element, what goes?", c:"Self-Reflection & Process" },
+  { t:"What's something you'd never done before on this one?", c:"Self-Reflection & Process" },
+  { t:"What rule did you break, and was it worth it?", c:"Self-Reflection & Process" },
+  { t:"What's the part you're least sure about?", c:"Self-Reflection & Process" },
+  { t:"What surprised you while working on this?", c:"Self-Reflection & Process" },
+  { t:"What took longer than you expected?", c:"Self-Reflection & Process" },
+  { t:"What came easier than you expected?", c:"Self-Reflection & Process" },
+  { t:"How does this hold up on mobile?", c:"Flow & Experience" },
+  { t:"Where might someone click off, and why?", c:"Flow & Experience" },
+  { t:"Does the flow feel intentional?", c:"Flow & Experience" },
+  { t:"What's the weakest link in the journey?", c:"Flow & Experience" },
+  { t:"What's the first thing the eye lands on?", c:"Flow & Experience" },
+  { t:"What's the last thing someone sees before deciding?", c:"Flow & Experience" },
+  { t:"Is there anywhere the pacing feels off?", c:"Flow & Experience" },
+  { t:"Where does the listing lose momentum?", c:"Flow & Experience" },
+  { t:"Where does it pick up?", c:"Flow & Experience" },
+  { t:"What's a choice you made that you'd defend hardest?", c:"Decision-Making" },
+  { t:"What's a choice you'd reconsider?", c:"Decision-Making" },
+  { t:"What did the brand push for that you weren't sure about?", c:"Decision-Making" },
+  { t:"What did you push for that the brand wasn't sure about?", c:"Decision-Making" },
+  { t:"What constraint shaped this the most?", c:"Decision-Making" },
+  { t:"What would you do if you had no constraints?", c:"Decision-Making" },
+  { t:"What did you almost include but didn't?", c:"Decision-Making" },
+  { t:"What's something you included that you almost didn't?", c:"Decision-Making" },
+  { t:"What's this listing's job?", c:"Big Picture" },
+  { t:"What's the one thing it has to do well?", c:"Big Picture" },
+  { t:"What does success look like for this?", c:"Big Picture" },
+  { t:"How will you know if it's working?", c:"Big Picture" },
+  { t:"What's the story this listing tells?", c:"Big Picture" },
+  { t:"What's the feeling you want someone to walk away with?", c:"Big Picture" },
+  { t:"If this were a billboard, what's the message?", c:"Big Picture" },
+  { t:"What does this say about the brand at a glance?", c:"Big Picture" },
+  { t:"If you had to explain this in one sentence, what would you say?", c:"Curveballs" },
+  { t:"What would make you scroll past this in search?", c:"Curveballs" },
+  { t:"If this product were a movie poster, what's the tagline?", c:"Curveballs" },
+  { t:"What's the most \"you\" thing about this design?", c:"Curveballs" },
+  { t:"What's the least \"you\" thing about this design?", c:"Curveballs" },
+  { t:"If a competitor saw this, what would worry them?", c:"Curveballs" },
+  { t:"What's something here only you would notice?", c:"Curveballs" },
+  { t:"What's the riskiest thing about this listing?", c:"Curveballs" },
+  { t:"What's the safest thing, and is that a problem?", c:"Curveballs" },
+  { t:"If you had to start over tomorrow, what would you keep?", c:"Curveballs" },
+];
+
+const LOREM = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum et dolorum fuga.",
+  "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae ultricies eget, tempor sit amet ante. Donec eu libero sit amet quam egestas semper auctor.",
+  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo nemo.",
+  "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.",
+  "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident similique sunt.",
+  "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Nam libero tempore cum soluta nobis eligendi optio cumque.",
+  "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus ut aut.",
+  "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur et facilis est et expedita distinctio earum.",
+  "Nam libero tempore cum soluta nobis eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus omnis voluptas assumenda est, omnis dolor repellendus temporibus autem quibusdam officiis.",
+];
+
+const BOLD_LINES = [
+  "The best design decisions are the ones nobody notices.",
+  "Clarity is a courtesy. Confusion is a cost.",
+  "Every pixel is a position on something.",
+  "The brand is the promise. The design is the proof.",
+  "Good work makes people feel something. Great work makes them forget to ask why.",
+  "What you leave out is as deliberate as what you put in.",
+  "Design is a language. Make sure you're saying what you mean.",
+  "The question isn't what looks good. It's what does the work.",
+  "You can't solve a strategy problem with a type choice.",
+  "The eye goes where it's told. Are you telling it the right thing?",
+];
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+let deck = shuffle(ALL);
+let idx  = 0;
+let busy = false;
+
+const spread      = document.getElementById('spread');
+const mastheadCat = document.getElementById('mastheadCat');
+const kicker      = document.getElementById('kicker');
+const headline    = document.getElementById('headline');
+const p1          = document.getElementById('p1');
+const p2          = document.getElementById('p2');
+const boldEl      = document.getElementById('bold');
+const p3          = document.getElementById('p3');
+const qOpen       = document.getElementById('qOpen');
+const pullText    = document.getElementById('pullText');
+const qClose      = document.getElementById('qClose');
+const pullCat     = document.getElementById('pullCat');
+const statNum     = document.getElementById('statNum');
+const statLabel   = document.getElementById('statLabel');
+const p4          = document.getElementById('p4');
+const p5          = document.getElementById('p5');
+const p6          = document.getElementById('p6');
+const folioPg     = document.getElementById('folioPg');
+const folioSec    = document.getElementById('folioSec');
+const progressFill= document.getElementById('progressFill');
+const nextBtn     = document.getElementById('nextBtn');
+
+// Inject drop-cap color rule once
+const dcStyle = document.createElement('style');
+dcStyle.textContent = `.body-copy.dropcap::first-letter { color: var(--dc, #1A1A18); }`;
+document.head.appendChild(dcStyle);
+
+function render() {
+  const q    = deck[idx];
+  const meta = CAT_META[q.c];
+  const ps   = shuffle(LOREM);
+  const col  = meta.color;
+
+  // Accent color
+  [mastheadCat, kicker, qOpen, qClose, pullCat, statNum, folioSec]
+    .forEach(el => el.style.color = col);
+  p1.style.setProperty('--dc', col);
+
+  // Content
+  mastheadCat.textContent = q.c;
+  kicker.textContent      = meta.kicker;
+  headline.textContent    = meta.headline;
+  p1.textContent          = ps[0];
+  p2.textContent          = ps[1];
+  boldEl.textContent      = BOLD_LINES[Math.floor(Math.random() * BOLD_LINES.length)];
+  p3.textContent          = ps[2];
+  pullText.textContent    = q.t;
+  pullCat.textContent     = q.c;
+  statNum.textContent     = meta.stat;
+  statLabel.textContent   = meta.statLabel;
+  p4.textContent          = ps[3];
+  p5.textContent          = ps[4];
+  p6.textContent          = ps[5];
+
+  // Folio
+  folioPg.textContent     = 48 + (idx % 44);
+  folioSec.textContent    = q.c;
+  progressFill.style.width= `${((idx + 1) / deck.length) * 100}%`;
+
+  nextBtn.textContent = idx >= deck.length - 1
+    ? 'Reshuffle  ↺'
+    : 'Next Question  →';
+}
+
+function next() {
+  if (busy) return;
+
+  if (idx >= deck.length - 1) {
+    deck = shuffle(ALL);
+    idx  = 0;
+  } else {
+    idx++;
+  }
+
+  busy = true;
+  nextBtn.disabled = true;
+  spread.classList.add('fading');
+
+  setTimeout(() => {
+    render();
+    spread.classList.remove('fading');
+    busy = false;
+    nextBtn.disabled = false;
+  }, 280);
+}
+
+nextBtn.addEventListener('click', next);
+document.addEventListener('keydown', e => {
+  if ([' ', 'ArrowRight', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+});
+
+render();
+</script>
+</body>
+</html>
